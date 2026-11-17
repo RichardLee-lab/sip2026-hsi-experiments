@@ -83,6 +83,7 @@ bash ~/sip2026-hsi-experiments/run_all.sh test
 | HSDT | 官方代码 + 公开权重（ICVL，complex noise） | GSSA 用 flex 模式，以适应 48 个波段 |
 | HIR-Diff | 官方代码 + ddpm-cd 的预训练扩散模型 | 官方设定（exp，k = 8，20 步，η1 = 16，η2 = 10，Rr = 3），等间隔选波段，seed 0 |
 
+- **MATLAB 工具箱**：LRTV、LRTDTV 各用到 Image Processing Toolbox 的一个函数（LRTV：`imfilter`，滤波器 H = 1，相当于原样复制；LRTDTV：只用 `psf2otf` 结果的绝对值）。没有这个工具箱时，会自动改用 `matlab/compat/` 里只用基础 MATLAB 写的版本。在 MacBook 上对比过：两张图、两个方法，复原结果逐个数值完全相同。
 - **线程**：CPU 方法（S3TTV、LRTV、LRTDTV）用一半的 CPU 核。GPU 方法（提案、SSTV、HSDT、HIR-Diff）用 Apple GPU（MPS）。
 - **计时**：只计复原本身，不含读数据和加载模型。
 - **HIR-Diff 的注意点**：官方采样器每一步都和真值比 PSNR，并返回最好的一步。这里保留官方做法，论文里要写明。

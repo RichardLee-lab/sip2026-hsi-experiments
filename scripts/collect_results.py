@@ -43,7 +43,8 @@ def load(scene, method):
         d = loadmat(p, squeeze_me=True, struct_as_record=False)
         mach = d["machine"]
         info = {"time_s": float(d["time_s"]),
-                "machine": {"device": "cpu", "threads": int(mach.threads), "matlab": str(mach.matlab)}}
+                "machine": {"device": "cpu", "threads": int(mach.threads), "matlab": str(mach.matlab),
+                            "ipt": str(getattr(mach, "ipt", "Image Processing Toolbox"))}}
         return np.clip(d["restored"].astype(np.float64), 0, 1).transpose(2, 0, 1), info
     return None
 
@@ -62,7 +63,7 @@ def main():
             m = evaluate(gt, x)
             mach = info.get("machine", {})
             if "matlab" in mach:
-                matlab = mach["matlab"]
+                matlab = "%s; imfilter and psf2otf: %s" % (mach["matlab"], mach["ipt"])
             elif machine is None:
                 machine = mach
             rows.append(dict(scene=scene, method=method, label=label, status="done",

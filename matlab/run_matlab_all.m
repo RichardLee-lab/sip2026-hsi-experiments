@@ -1,4 +1,4 @@
-function run_matlab_all(force)
+function run_matlab_all(force, use_compat)
 % LRTV and LRTDTV (official MATLAB codes in ../external) on both scenes, with the parameters chosen on
 % PaviaU (see README). Results: results/<scene>/<method>.mat with the restored image (H x W x B, single,
 % clipped to [0,1]), the run time and the machine. Finished runs are skipped unless force = true.
@@ -8,21 +8,41 @@ function run_matlab_all(force)
 %
 % Protocol as in our earlier runs: rng(0) before each run (LRTV starts from a random matrix), output
 % clipped to [0,1]. CPU threads: half of the cores, the same number as the Python CPU methods.
+%
+% Each code calls one function of the Image Processing Toolbox (LRTV: imfilter with H = 1, LRTDTV:
+% abs(psf2otf(.))). Without the toolbox, the base-MATLAB replacements in ./compat are used; they give
+% the same results (checked on the MacBook). use_compat = true forces them.
 if nargin < 1; force = false; end
 here = fileparts(mfilename('fullpath'));
 repo = fileparts(here);
+if nargin < 2
+    use_compat = false;
+    try
+        imfilter(1, 1, 'circular');
+        psf2otf(1, [2 2]);
+    catch
+        use_compat = true;
+    end
+end
+if use_compat
+    addpath(fullfile(here, 'compat'), '-begin');
+    ipt = 'base-MATLAB replacements in matlab/compat';
+    fprintf('Image Processing Toolbox not used: imfilter = %s, psf2otf = %s\n', which('imfilter'), which('psf2otf'));
+else
+    ipt = 'Image Processing Toolbox';
+end
 nthreads = max(1, floor(feature('numcores') / 2));
 maxNumCompThreads(nthreads);
 scenes = {'PaviaU', 'PaviaC'};
 methods = {'LRTV', 'LRTDTV'};
 for i = 1:numel(scenes)
     for j = 1:numel(methods)
-        run_one(repo, scenes{i}, methods{j}, nthreads, force);
+        run_one(repo, scenes{i}, methods{j}, nthreads, force, ipt);
     end
 end
 end
 
-function run_one(repo, scene, method, nthreads, force)
+function run_one(repo, scene, method, nthreads, force, ipt)
 outdir = fullfile(repo, 'results', scene);
 outfile = fullfile(outdir, [method '.mat']);
 if exist(outfile, 'file') && ~force
@@ -63,7 +83,7 @@ mpsnr = mean(10 * log10(1 ./ max(mse, 1e-12)));
 restored = single(X); %#ok<NASGU>
 [~, cpu] = system('sysctl -n machdep.cpu.brand_string');
 machine = struct('matlab', version, 'computer', computer, 'cpu', strtrim(cpu), ...
-                 'cpu_cores', feature('numcores'), 'threads', nthreads); %#ok<NASGU>
+                 'cpu_cores', feature('numcores'), 'threads', nthreads, 'ipt', ipt); %#ok<NASGU>
 tmp = fullfile(outdir, [method '.partial.mat']);
 save(tmp, 'restored', 'time_s', 'params', 'machine', 'mpsnr', '-v7');
 movefile(tmp, outfile, 'f');
