@@ -1,0 +1,26 @@
+{
+ "rho": 0.95,
+ "note": "eps: Gaussian noise outside impulse positions (l2); alpha: impulse component incl. the overwritten Gaussian noise (l1); beta: stripes (l1). Radii = rho x true norms (noise levels known, as in [1]).",
+ "PaviaU": {
+  "raw_norms": {
+   "eps_l2": 254.1773551602298,
+   "alpha_l1": 98131.92597622835,
+   "beta_l1": 29133.36648102291
+  },
+  "epsilon": 241.4684874022183,
+  "alpha": 93225.32967741693,
+  "beta": 27676.69815697176,
+  "max_abs_vertical_diff_of_stripes": 1.1920928955078125e-07
+ },
+ "PaviaC": {
+  "raw_norms": {
+   "eps_l2": 254.17735515892468,
+   "alpha_l1": 98096.86510546163,
+   "beta_l1": 29133.36647992796
+  },
+  "epsilon": 241.46848740097843,
+  "alpha": 93192.02185018855,
+  "beta": 27676.69815593156,
+  "max_abs_vertical_diff_of_stripes": 1.1920928955078125e-07
+ }
+}

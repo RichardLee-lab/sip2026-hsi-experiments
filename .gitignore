@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+results/
+uv.lock
+external/HIRDiff/checkpoints/diffusion/*.pth
+external/HIRDiff/checkpoints/diffusion/*.bad

@@ -1,0 +1,24 @@
+[project]
+name = "sip2026-hsi-experiments"
+version = "1.0.0"
+description = "All methods of the SIP 2026 poster experiments (PaviaU / Pavia Centre, case 5) on one machine"
+readme = "README.md"
+requires-python = "==3.10.*"
+# the versions of the environment in which all methods were run on the MacBook Pro (M2 Pro)
+dependencies = [
+    "torch==2.12.1",
+    "torchvision==0.27.1",
+    "pytorch-lightning==2.6.5",
+    "numpy==2.2.6",
+    "scipy==1.15.3",
+    "scikit-image==0.25.2",
+    "einops==0.8.2",
+    "omegaconf==2.3.1",
+    "matplotlib==3.10.9",
+    "tqdm==4.68.3",
+    "imgvision==0.1.7.3",
+    "pyyaml==6.0.3",
+]
+
+[tool.uv]
+package = false
