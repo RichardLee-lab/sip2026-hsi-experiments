@@ -36,7 +36,7 @@ run() {
     local rc=$?
     if [ $rc -eq 0 ]; then STATUS+=("完成  $name")
     elif [ $rc -eq 3 ]; then STATUS+=("跳过  $name")
-    else echo "!!!! $name 失败（exit $rc），继续下一步"; STATUS+=("失败  $name"); fi
+    else echo "!!!! $name 失败（exit ${rc}），继续下一步"; STATUS+=("失败  $name"); fi
     return $rc
 }
 
@@ -58,7 +58,7 @@ setup() {
     # HIR-Diff 的扩散模型（1.56 GB，超过 GitHub 的上限，需要另外拷过来）
     if [ ! -f "$CK" ]; then
         for f in "$HOME/Downloads/I190000_E97_gen.pth" "$HOME/Desktop/I190000_E97_gen.pth" "$REPO/I190000_E97_gen.pth"; do
-            if [ -f "$f" ]; then echo "找到 $f，移动到 $CK"; mv "$f" "$CK"; break; fi
+            if [ -f "$f" ]; then echo "找到 ${f}，移动到 $CK"; mv "$f" "$CK"; break; fi
         done
     fi
     if [ -f "$CK" ]; then
@@ -122,13 +122,13 @@ full() {
     run "汇总表（S3TTV 之前）" "$PY" -u scripts/collect_results.py
     if [ $T_S3TTV = 1 ]; then
         for S in PaviaU PaviaC; do
-            run "S3TTV $S（最慢，可能要数小时）" "$PY" -u scripts/run_s3ttv.py --scene $S
+            run "S3TTV ${S}（最慢，可能要数小时）" "$PY" -u scripts/run_s3ttv.py --scene $S
         done
     fi
 }
 
 caffeinate -ims -w $$ >/dev/null 2>&1 &      # 运行期间不让电脑睡眠
-echo "开始 $(date '+%Y-%m-%d %H:%M:%S')，模式 $MODE，目录 $REPO"
+echo "开始 $(date '+%Y-%m-%d %H:%M:%S')，模式 ${MODE}，目录 $REPO"
 if [ "$MODE" = summary ]; then
     "$PY" -u scripts/collect_results.py
     exit $?
